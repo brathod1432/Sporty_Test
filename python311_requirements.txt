@@ -1,0 +1,5 @@
+# Sporty_Test — Python 3.11 dependencies
+requests==2.34.2
+pytest==9.1.1
+selenium>=4.6
+numpy==2.4.6
