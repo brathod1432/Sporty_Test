@@ -1,0 +1,11 @@
+{
+  "venvPath": ".",
+  "venv": ".venv",
+  "typeCheckingMode": "standard",
+  "extraPaths": [
+    ".",
+    "libs",
+    "libs/testfunctions",
+    "C:/Users/kbrat/AppData/Roaming/Python/Python311/site-packages"
+  ]
+}

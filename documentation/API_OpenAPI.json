@@ -1,0 +1,504 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Sports Betting API",
+    "version": "1.0.0",
+    "description": "API for the Sports Betting QA Assessment App"
+  },
+  "servers": [
+    {
+      "url": "/",
+      "description": "Current environment"
+    }
+  ],
+  "security": [
+    {
+      "UserIdHeader": []
+    }
+  ],
+  "paths": {
+    "/api/matches": {
+      "get": {
+        "summary": "Get all matches",
+        "operationId": "getMatches",
+        "tags": [
+          "Matches"
+        ],
+        "security": [
+          {
+            "UserIdHeader": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of upcoming matches",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Match"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid user id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthError"
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Method not allowed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/balance": {
+      "get": {
+        "summary": "Get current balance",
+        "operationId": "getBalance",
+        "tags": [
+          "Balance"
+        ],
+        "security": [
+          {
+            "UserIdHeader": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Current user balance",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Balance"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid user id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthError"
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Method not allowed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/place-bet": {
+      "post": {
+        "summary": "Place a bet",
+        "operationId": "placeBet",
+        "tags": [
+          "Bets"
+        ],
+        "security": [
+          {
+            "UserIdHeader": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PlaceBetRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Bet placed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlaceBetResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Malformed or non-object JSON payload",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "invalidRequestBody": {
+                    "summary": "Body is not a JSON object",
+                    "value": {
+                      "error": "invalid_request",
+                      "message": "Request body must be a JSON object."
+                    }
+                  },
+                  "invalidJson": {
+                    "summary": "Malformed JSON",
+                    "value": {
+                      "error": "invalid_json",
+                      "message": "Malformed JSON body."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid user id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthError"
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Method not allowed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "A bet is already being processed for this user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Semantic validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "invalidMatchId": {
+                    "summary": "matchId is missing or invalid",
+                    "value": {
+                      "error": "invalid_match_id",
+                      "message": "Match id is invalid."
+                    }
+                  },
+                  "invalidSelection": {
+                    "summary": "selection is invalid",
+                    "value": {
+                      "error": "invalid_selection",
+                      "message": "Selection must be one of: HOME, DRAW, AWAY."
+                    }
+                  },
+                  "invalidStakeType": {
+                    "summary": "stake is not a valid number",
+                    "value": {
+                      "error": "invalid_stake_type",
+                      "message": "Stake must be a valid number."
+                    }
+                  },
+                  "invalidStakePrecision": {
+                    "summary": "stake has more than two decimals",
+                    "value": {
+                      "error": "invalid_stake_precision",
+                      "message": "Stake can have up to 2 decimal places."
+                    }
+                  },
+                  "invalidStakeMin": {
+                    "summary": "stake is below minimum",
+                    "value": {
+                      "error": "invalid_stake_min",
+                      "message": "Stake must be at least 1.00."
+                    }
+                  },
+                  "invalidStakeMax": {
+                    "summary": "stake exceeds maximum",
+                    "value": {
+                      "error": "invalid_stake_max",
+                      "message": "Stake must be at most 100.00."
+                    }
+                  },
+                  "invalidMatch": {
+                    "summary": "match does not exist",
+                    "value": {
+                      "error": "invalid_match",
+                      "message": "Match not found."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/reset-balance": {
+      "post": {
+        "summary": "Reset balance and return response payload",
+        "operationId": "resetBalance",
+        "tags": [
+          "Balance"
+        ],
+        "security": [
+          {
+            "UserIdHeader": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Balance reset successfully (response payload may differ from persisted balance)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Balance reset successfully"
+                    },
+                    "balance": {
+                      "type": "number",
+                      "example": 125.5
+                    },
+                    "currency": {
+                      "type": "string",
+                      "example": "EUR"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid user id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthError"
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Method not allowed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "UserIdHeader": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "x-user-id",
+        "description": "Session token required for all endpoints."
+      }
+    },
+    "schemas": {
+      "Match": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "premier-league-manutd-chelsea"
+          },
+          "competition": {
+            "type": "string",
+            "example": "Premier League"
+          },
+          "kickoffDate": {
+            "type": "string",
+            "format": "date",
+            "example": "2026-01-30"
+          },
+          "homeTeam": {
+            "type": "string",
+            "example": "Manchester Utd"
+          },
+          "awayTeam": {
+            "type": "string",
+            "example": "Chelsea"
+          },
+          "odds": {
+            "$ref": "#/components/schemas/Odds"
+          }
+        }
+      },
+      "Odds": {
+        "type": "object",
+        "properties": {
+          "home": {
+            "type": "number",
+            "example": 2.45
+          },
+          "draw": {
+            "type": "number",
+            "example": 3.1
+          },
+          "away": {
+            "type": "number",
+            "example": 2.8
+          }
+        }
+      },
+      "Balance": {
+        "type": "object",
+        "properties": {
+          "balance": {
+            "type": "number",
+            "example": 125.5
+          },
+          "currency": {
+            "type": "string",
+            "example": "EUR"
+          }
+        }
+      },
+      "PlaceBetRequest": {
+        "type": "object",
+        "required": [
+          "matchId",
+          "selection",
+          "stake"
+        ],
+        "additionalProperties": true,
+        "description": "Additional fields are ignored by the API.",
+        "properties": {
+          "matchId": {
+            "type": "string",
+            "example": "premier-league-manutd-chelsea"
+          },
+          "selection": {
+            "type": "string",
+            "enum": [
+              "HOME",
+              "DRAW",
+              "AWAY"
+            ],
+            "example": "HOME"
+          },
+          "stake": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 100,
+            "example": 10
+          }
+        }
+      },
+      "PlaceBetResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Bet placed successfully"
+          },
+          "matchId": {
+            "type": "string",
+            "example": "premier-league-manutd-chelsea"
+          },
+          "selection": {
+            "type": "string",
+            "example": "HOME"
+          },
+          "stake": {
+            "type": "number",
+            "example": 10
+          },
+          "odds": {
+            "type": "number",
+            "example": 2.45
+          },
+          "payout": {
+            "type": "number",
+            "example": 24.5
+          },
+          "balance": {
+            "type": "number",
+            "example": 115.5
+          },
+          "currency": {
+            "type": "string",
+            "example": "EUR"
+          }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "example": "insufficient_balance"
+          },
+          "message": {
+            "type": "string",
+            "example": "Insufficient balance"
+          }
+        }
+      },
+      "AuthError": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "enum": [
+              "missing_user_id",
+              "invalid_user_id"
+            ],
+            "example": "missing_user_id"
+          }
+        }
+      }
+    }
+  }
+}
