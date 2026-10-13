@@ -42,8 +42,8 @@ being **paid out** - is bug SportyQAD-021 (Critical), written up in
 ## Two things to know
 
 - **Costs money** means the test spends real balance. Run those by hand and record the
-  result. `tools/run_free_suite.py` runs the free ones and proves the balance did not
-  move.
+  result. The free ones run under plain `pytest` (money tests skip without `--run-bet`)
+  and never move the balance — confirm with `GET /api/balance` before and after.
 - **Never assume the opening balance.** This account holds **EUR 120.00**, not the
   EUR 125.50 named in the brief. Reset works, but it reports 125.50 while restoring
   120.00 - see TC-007 and bug SportyQAD-018. Always read `GET /api/balance`.

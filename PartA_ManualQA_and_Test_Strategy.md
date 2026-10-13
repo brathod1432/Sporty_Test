@@ -129,8 +129,8 @@ failures spend real money, so each run was deliberate and is on record:
 A few notes on the runs:
 
 - TC-001's automated version (`test_e2e_bet.py`) confirms the Bet ID and the balance movement. The field-by-field reconciliation stays manual — eyes beat assertions on copy and layout.
-- TC-002 and TC-003 run behind `--run-bet` precisely because they charge while failing. That's not caution for its own sake; it's EUR 1–2 per run.
-- I also spent a few minutes clicking around the flow with no bets placed (list, filters, header icons). That's where the display-side finds below came from.
+- TC-002 and TC-003 run behind `--run-bet` because they charge while failing (EUR 1–2 per run) — that's cost control, not caution for its own sake.
+- I also clicked around the flow with no bets placed (list, filters, header icons). That's where the display-side finds came from.
 
 ---
 

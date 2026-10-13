@@ -83,10 +83,6 @@ Sporty_Test/
 │   ├── test_e2e_bet.py          # Happy-path bet (gated — spends money).
 │   └── test_ui_regression.py    # Filters, cards, slip, stake, modals, network, HTTPS.
 │
-├── tools/
-│   ├── run_free_suite.py        # Runs everything AND proves it cost nothing (balance + log scan).
-│   └── mermaid_check.py         # Renders every mermaid block in the docs — diagrams must build, not just look right.
-│
 ├── documentation/               # Brief + spec transcriptions, API guide, spec-vs-live gap analysis.
 │   └── test_strategy/           # 10 cases (TC-001..010) with priority, risk, steps, expected, cost.
 ├── defectsVault/                # 22 filed defects (15 Bugs + 7 Epics) with screenshots.
@@ -107,7 +103,7 @@ Sporty_Test/
 **The runs:**
 
 - **Free run (default, spends nothing)** — `pytest tests/ -v`. Expect passes, skips (gated money tests) and xfails (open bugs, each naming its defect ID — a red line is always traceable, never a mystery).
-- **Cost proof** — `python tools/run_free_suite.py`. Proves zero cost two ways: balance before vs after, plus a scan of the run's own logs for any successful place-bet. Both have to agree.
+- **Cost proof** — read `GET /api/balance` before and after the free run. Money tests skip without `--run-bet`, so a plain run can't spend; the two readings prove it.
 - **Gated run (spends real balance — approval only)** — `pytest tests/ -v --run-bet`. The 4 money tests, each resetting the balance afterwards. Deliberate runs only, never CI.
 - **Without pytest** — every file is also a script: `python tests/api_tests/test_api_business_rules.py -td check_get_matches,check_get_balance`. No flag = all checks. `-td` picks by name. `-x` stops at the first failure (default: run everything).
 
